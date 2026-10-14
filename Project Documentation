@@ -1,0 +1,77 @@
+# Project Documentation — Medical Insurance Cost Prediction
+
+## 1. Overview
+This project demonstrates a complete supervised machine learning workflow for estimating medical insurance charges from tabular demographic and lifestyle information. The target column is `charges`, so the task is a regression problem.
+
+## 2. Problem definition
+Insurance charges vary across individuals. The objective is to learn relationships between age, BMI, smoking status, number of children, sex, region, and historical charges, then use those relationships to produce a numeric estimate for a new record.
+
+## 3. Dataset and target
+The dataset has seven columns: six input features (`age`, `sex`, `bmi`, `children`, `smoker`, `region`) and the target (`charges`). The original file had 2,772 rows; duplicate removal left 1,337 records. The cleaned data had no missing values. The dataset is commonly known as the Medical Cost Personal Dataset and is US-focused.
+
+## 4. Preprocessing
+- Checked the table shape, column types, missing values, and duplicate rows.
+- Removed duplicate records.
+- Kept `charges` as the regression target and the six remaining columns as predictors.
+- Applied categorical encoding and numeric handling through a scikit-learn preprocessing pipeline to ensure the same transformations are used during training and inference.
+- Split data into training and test subsets at 80:20 with `random_state=42`: 1,069 training examples and 268 test examples.
+
+## 5. Exploratory data analysis
+The exploratory stage reviews target distribution, numeric feature distributions, category counts, and relationships between features and charges. The analysis motivates inspecting smoking status, age, and BMI carefully. EDA can reveal associations, but it cannot establish that a feature causes higher charges. The dataset is limited, so observed patterns may not generalize.
+
+## 6. Model selection and training
+Multiple Linear Regression was chosen as an interpretable baseline. The model learns coefficients that combine the processed features to estimate the target. Training uses the training partition only; performance is then measured on the held-out test partition. The saved pipeline includes preprocessing and regression so that app predictions use the same feature transformations.
+
+## 7. Evaluation results
+The Phase 6 test-set metrics are:
+
+- **MAE:** $4,177.05
+- **MSE:** 35,478,020.68
+- **RMSE:** $5,956.34
+- **R²:** 0.8069
+- **Test set size:** 268 rows
+
+MAE expresses average absolute error in the target's currency units. RMSE also uses target currency units and penalizes larger errors more strongly. MSE is in squared currency units. R² = 0.8069 means the model explained approximately 80.69% of target variation on this particular test split; it does not mean each estimate is 80.69% accurate.
+
+## 8. Prediction application
+The Streamlit application asks for age, BMI, sex, number of children, smoking status, and region. On submission, it sends the values to the saved preprocessing/model pipeline and displays the estimated insurance charge.
+
+### Test case A — non-smoker
+- Age: 25
+- BMI: 22.5
+- Children: 0
+- Sex: female
+- Smoker: no
+- Region: southwest
+- Predicted charges: $1,624.26
+
+### Test case B — smoker
+- Age: 45
+- BMI: 32
+- Children: 2
+- Sex: male
+- Smoker: yes
+- Region: southeast
+- Predicted charges: $33,478.60
+
+The examples illustrate how estimates differ for two distinct input profiles; they do not establish causation and are not quotes from an insurer.
+
+## 9. How to run
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+Open the local URL shown by Streamlit, enter the required fields, and submit the form. Python and dependency versions can affect reproducibility; use a compatible Python version and trusted package sources.
+
+## 10. GitHub publication and deployment
+Commit the project files to a GitHub repository. Deploy through Streamlit Community Cloud by connecting GitHub, selecting the repository and branch, and setting `app.py` as the main file. Test the public URL after deployment. A repository and hosted app cannot be truthfully marked as published until the account-side steps have been completed.
+
+## 11. Limitations
+- Historical, US-focused data may not represent other countries, insurers, current prices, or individual circumstances.
+- Linear Regression may not model nonlinear relationships or complex interactions.
+- Prediction error remains substantial, especially for individual estimates.
+- Demographic and lifestyle variables can raise fairness and privacy concerns.
+- The model is for education only and must not be used for real underwriting, healthcare, eligibility, or financial decisions without appropriate validation and governance.
+
+## 12. Conclusion
+The project implements a reproducible baseline regression workflow and a small prediction interface. The reported R² of 0.8069 indicates a useful fit on the chosen test split, while the MAE and RMSE show that individual predictions can still differ meaningfully from actual charges. The project should be treated as a demonstration, not a production decision system.
