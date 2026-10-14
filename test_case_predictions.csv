@@ -1,0 +1,3 @@
+test_case,age,bmi,children,sex,smoker,region,predicted_insurance_cost
+1,25,22.5,0,female,no,southwest,1624.26
+2,45,32.0,2,male,yes,southeast,33478.6
